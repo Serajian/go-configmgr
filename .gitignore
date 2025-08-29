@@ -1,0 +1,29 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Compiled object files
+*.o
+*.a
+
+# Go executable files
+*_test.go
+
+# Vendor directory
+/vendor/
+
+# Go workspace cache
+/.cache/
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+data/
+*.gob
