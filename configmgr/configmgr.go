@@ -90,15 +90,6 @@ func (cm *ConfigManager) GetAll() map[string]interface{} {
 	return cm.data
 }
 
-// Unmarshal fills the given struct with config values.
-func (cm *ConfigManager) Unmarshal(target interface{}) error {
-	raw, err := json.Marshal(cm.data) // convert map to JSON
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(raw, target) // fill the struct
-}
-
 // normalizeKey ensures all keys are stored in uppercase.
 func normalizeKey(key string) string {
 	return strings.ToUpper(key)

@@ -2,19 +2,53 @@ package main
 
 import (
 	"fmt"
+	"log"
+
+	"github.com/Serajian/go-configmgr/configmgr"
 )
 
-// TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
-func main() {
-	//TIP <p>Press <shortcut actionId="ShowIntentionActions"/> when your caret is at the underlined text
-	// to see how GoLand suggests fixing the warning.</p><p>Alternatively, if available, click the lightbulb to view possible fixes.</p>
-	s := "gopher"
-	fmt.Printf("Hello and welcome, %s!\n", s)
+// AppConfig example
+type AppConfig struct {
+	Name  string `json:"APP_NAME"`
+	Port  int    `json:"APP_PORT"`
+	Debug bool   `json:"APP_DEBUG"`
+}
 
-	for i := 1; i <= 5; i++ {
-		//TIP <p>To start your debugging session, right-click your code in the editor and select the Debug option.</p> <p>We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-		// for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.</p>
-		fmt.Println("i =", 100/i)
+// DatabaseConfig example
+type DatabaseConfig struct {
+	Host string `json:"DB_HOST"`
+	Port int    `json:"DB_PORT" validate:"max=10000,min=1"`
+	User string `json:"DB_USER" validate:"required" default:"root"`
+	Pass string `json:"DB_PASS"`
+	Name string `json:"DB_NAME" default:"postgres" validate:"required"`
+}
+
+func main() {
+	fmt.Println("Hello World")
+
+	cm := configmgr.NewConfigManager()
+
+	// load .env
+	if err := cm.LoadFromDotEnv(".env"); err != nil {
+		log.Fatal(err)
 	}
+	if err := cm.LoadFromFile("config.yaml"); err != nil {
+		log.Fatal(err)
+	}
+
+	// parse AppConfig
+	var appCfg AppConfig
+	if err := cm.Unmarshal(&appCfg); err != nil {
+		log.Fatal(err)
+	}
+
+	// parse DatabaseConfig
+	var dbCfg DatabaseConfig
+	if err := cm.Unmarshal(&dbCfg); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("App Config: %+v\n", appCfg)
+	//fmt.Printf("%+v\n", cm.GetAll())
+	fmt.Printf("Database Config: %+v\n", dbCfg)
 }
