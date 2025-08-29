@@ -1,15 +1,11 @@
 package configmgr
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/joho/godotenv"
-	"gopkg.in/yaml.v3"
 )
 
 // ConfigManager is the core configuration manager.
@@ -20,36 +16,6 @@ type ConfigManager struct {
 // NewConfigManager creates a new ConfigManager instance.
 func NewConfigManager() *ConfigManager {
 	return &ConfigManager{data: make(map[string]interface{})}
-}
-
-// LoadFromFile loads configuration from a JSON or YAML file.
-func (cm *ConfigManager) LoadFromFile(path string) error {
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	ext := strings.ToLower(filepath.Ext(path))
-	tmp := make(map[string]interface{})
-
-	switch ext {
-	case ".json":
-		if err = json.Unmarshal(raw, &tmp); err != nil {
-			return err
-		}
-	case ".yaml", ".yml":
-		if err = yaml.Unmarshal(raw, &tmp); err != nil {
-			return err
-		}
-	default:
-		return fmt.Errorf("unsupported file type: %s", ext)
-	}
-
-	for k, v := range tmp {
-		cm.data[normalizeKey(k)] = normalizeValue(v)
-	}
-
-	return nil
 }
 
 // LoadFromDotEnv loads variables from a .env file into both system env and cm.data.
