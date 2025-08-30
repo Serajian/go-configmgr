@@ -102,7 +102,128 @@ err := cm.LoadEncryptedFile("config.yaml.enc", os.Getenv("CONFIG_SECRET_KEY"))
 ---
 
 ## 🌍 Real-world Examples
-### Example 1: Microservice with Gin
+## Example A: simple
+### Example A:1: Just from ENV
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/Serajian/go-configmgr/configmgr"
+)
+
+func main() {
+	cm := configmgr.NewConfigManager()
+
+	if err := cm.LoadFromDotEnv(".env"); err != nil {
+		log.Fatalf("failed to load .env: %v", err)
+	}
+
+	fmt.Println("DB_HOST =", cm.Get("DB_HOST"))
+	fmt.Println("DB_PORT =", cm.Get("DB_PORT"))
+}
+
+```
+---
+### Example A:2: Just from YML
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/Serajian/go-configmgr/configmgr"
+)
+
+type DatabaseConfig struct {
+	Host string `json:"DB_HOST"`
+	Port int    `json:"DB_PORT"`
+}
+
+func main() {
+	cm := configmgr.NewConfigManager()
+
+	if err := cm.LoadFromFile("config.yaml"); err != nil {
+		log.Fatalf("failed to load config.yaml: %v", err)
+	}
+
+	var dbCfg DatabaseConfig
+	if err := cm.Unmarshal(&dbCfg); err != nil {
+		log.Fatalf("failed to unmarshal db config: %v", err)
+	}
+
+	fmt.Printf("Database config: %+v\n", dbCfg)
+}
+
+```
+---
+### Example A:3: mix
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/Serajian/go-configmgr/configmgr"
+)
+
+func main() {
+	cm := configmgr.NewConfigManager()
+
+	if err := cm.LoadFromFile("config.yaml"); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := cm.LoadFromDotEnv(".env"); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Final config: %+v\n", cm.GetAll())
+}
+
+```
+---
+### Example A:4: fast test by NewTestConfig
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/Serajian/go-configmgr/configmgr"
+)
+
+type AppConfig struct {
+	Name string `json:"APP_NAME" default:"MyService"`
+	Port int    `json:"APP_PORT" default:"8080"`
+}
+
+func main() {
+	cm := configmgr.NewTestConfig(map[string]string{
+		"APP_NAME": "TestApp",
+		"APP_PORT": "9999",
+	})
+
+	var cfg AppConfig
+	if err := cm.Unmarshal(&cfg); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("App config: %+v\n", cfg)
+}
+```
+---
+## Example B: case
+### Example B:1: Microservice with Gin
 
 ```go
 package main
@@ -145,7 +266,7 @@ func main() {
 }
 
 ```
-### Example 2: Worker Service (Kafka Consumer)
+### Example B:2: Worker Service (Kafka Consumer)
 
 ```go
 package main
@@ -182,7 +303,7 @@ func main() {
 }
 
 ```
-### Example 3: Secure Configs (Encrypted)
+### Example B:3: Secure Configs (Encrypted)
 
 ```go
 package main
