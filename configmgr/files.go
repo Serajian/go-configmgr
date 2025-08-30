@@ -36,7 +36,9 @@ func (cm *ConfigManager) LoadFromFile(path string) error {
 	for k, v := range tmp {
 		cm.data[normalizeKey(k)] = normalizeValue(v)
 	}
-
+	if cm.logger != nil {
+		cm.logger.Info("load_from_file_success", map[string]interface{}{"path": path})
+	}
 	return nil
 }
 

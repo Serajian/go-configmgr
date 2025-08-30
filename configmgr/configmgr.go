@@ -1,44 +1,19 @@
 package configmgr
 
 import (
-	"os"
 	"strconv"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 // ConfigManager is the core configuration manager.
 type ConfigManager struct {
-	data map[string]interface{}
+	data   map[string]interface{}
+	logger Logger
 }
 
 // NewConfigManager creates a new ConfigManager instance.
 func NewConfigManager() *ConfigManager {
 	return &ConfigManager{data: make(map[string]interface{})}
-}
-
-// LoadFromDotEnv loads variables from a .env file into both system env and cm.data.
-func (cm *ConfigManager) LoadFromDotEnv(path string) error {
-	if path == "" {
-		path = ".env"
-	}
-	envMap, err := godotenv.Read(path)
-	if err != nil {
-		return err
-	}
-	for k, v := range envMap {
-		_ = os.Setenv(k, v)
-		cm.data[normalizeKey(k)] = normalizeValue(v)
-	}
-	return nil
-}
-
-// LoadFromSysEnv loads a single environment variable into cm.data.
-func (cm *ConfigManager) LoadFromSysEnv(key string) {
-	if val, ok := os.LookupEnv(key); ok {
-		cm.data[normalizeKey(key)] = normalizeKey(val)
-	}
 }
 
 // Get returns a raw value from config data.
