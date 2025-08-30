@@ -37,8 +37,9 @@ func normalizeKey(key string) string {
 }
 
 func normalizeValue(value interface{}) interface{} {
-	if str, ok := value.(string); ok {
-		s := strings.TrimSpace(str)
+	switch v := value.(type) {
+	case string:
+		s := strings.TrimSpace(v)
 
 		// try parse int
 		if i, err := strconv.Atoi(s); err == nil {
@@ -50,8 +51,17 @@ func normalizeValue(value interface{}) interface{} {
 			return b
 		}
 
-		// default: return as string
+		// default: return string
 		return s
+
+	case float64:
+		// اگر اعشاری نیست، به int تبدیل کن
+		if v == float64(int(v)) {
+			return int(v)
+		}
+		return v
+
+	default:
+		return value
 	}
-	return value
 }
