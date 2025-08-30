@@ -9,8 +9,7 @@
 *.o
 *.a
 
-# Go executable files
-*_test.go
+
 
 # Vendor directory
 /vendor/
