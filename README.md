@@ -25,7 +25,7 @@ profile-based overrides (dev/prod/staging), defaults, validation, and exporting.
 ## 🚀 Installation
 
 ```bash
-go get github.com/Serajian/go-configmgr/configmgr
+go get github.com/Serajian/go-configmgr@latest
 ```
 ---
 
