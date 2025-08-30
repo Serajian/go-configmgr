@@ -1,6 +1,6 @@
 # Release Notes
 
-## v0.1.0 - Initial Release 🎉
+## v1.0.0 - Initial Release 🎉
 
 ✨ First stable release of **go-configmgr**
 
